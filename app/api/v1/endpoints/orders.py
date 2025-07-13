@@ -11,7 +11,7 @@ router = APIRouter()
 @router.post("/", response_model=OrderResponse)
 async def create_order(
     order_data: OrderCreate,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Create a new order"""
     try:
@@ -27,7 +27,7 @@ async def get_my_orders(
     limit: int = Query(10, ge=1, le=100),
     status: Optional[OrderStatus] = Query(None),
     payment_status: Optional[PaymentStatus] = Query(None),
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Get current user's orders (as buyer)"""
     filter_data = OrderFilter(status=status, payment_status=payment_status)
@@ -43,7 +43,7 @@ async def get_my_sales(
     limit: int = Query(10, ge=1, le=100),
     status: Optional[OrderStatus] = Query(None),
     payment_status: Optional[PaymentStatus] = Query(None),
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Get current user's sales (as seller)"""
     filter_data = OrderFilter(status=status, payment_status=payment_status)
@@ -56,17 +56,18 @@ async def get_my_sales(
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order(
     order_id: str,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Get order by ID"""
     order = await order_service.get_order_by_id(order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    
+
     # Check if user is involved in this order
     if order.buyer_id != current_user.id and order.seller_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to view this order")
-    
+        raise HTTPException(status_code=403,
+                            detail="Not authorized to view this order")
+
     return order
 
 
@@ -74,11 +75,12 @@ async def get_order(
 async def update_order(
     order_id: str,
     order_data: OrderUpdate,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Update order status (only by seller)"""
     order = await order_service.update_order(order_id, order_data, current_user.id)
     if not order:
-        raise HTTPException(status_code=404, detail="Order not found or not authorized")
-    
+        raise HTTPException(status_code=404,
+                            detail="Order not found or not authorized")
+
     return order

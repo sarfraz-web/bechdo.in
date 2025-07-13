@@ -12,7 +12,7 @@ router = APIRouter()
 @router.post("/", response_model=ProductResponse)
 async def create_product(
     product_data: ProductCreate,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Create a new product"""
     product = await product_service.create_product(product_data, current_user.id)
@@ -39,7 +39,7 @@ async def get_products(
         location=location,
         search=search
     )
-    
+
     products = await product_service.get_products(filter_data, skip, limit)
     return products
 
@@ -48,7 +48,7 @@ async def get_products(
 async def get_my_products(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Get current user's products"""
     products = await product_service.get_user_products(current_user.id, skip, limit)
@@ -61,10 +61,10 @@ async def get_product(product_id: str):
     product = await product_service.get_product_by_id(product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    
+
     # Increment views
     await product_service.increment_views(product_id)
-    
+
     return product
 
 
@@ -72,45 +72,48 @@ async def get_product(product_id: str):
 async def update_product(
     product_id: str,
     product_data: ProductUpdate,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Update product (only by owner)"""
     product = await product_service.update_product(product_id, product_data, current_user.id)
     if not product:
-        raise HTTPException(status_code=404, detail="Product not found or not authorized")
-    
+        raise HTTPException(status_code=404,
+                            detail="Product not found or not authorized")
+
     return product
 
 
 @router.delete("/{product_id}")
 async def delete_product(
     product_id: str,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Delete product (only by owner)"""
     success = await product_service.delete_product(product_id, current_user.id)
     if not success:
-        raise HTTPException(status_code=404, detail="Product not found or not authorized")
-    
+        raise HTTPException(status_code=404,
+                            detail="Product not found or not authorized")
+
     return {"message": "Product deleted successfully"}
 
 
 @router.post("/upload-images")
 async def upload_product_images(
     files: List[UploadFile] = File(...),
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Upload product images"""
     if len(files) > 5:
         raise HTTPException(status_code=400, detail="Maximum 5 images allowed")
-    
+
     try:
         image_urls = []
         for file in files:
             image_url = await image_upload_service.upload_image(file, "products")
             image_urls.append(image_url)
-        
-        return {"message": "Images uploaded successfully", "image_urls": image_urls}
+
+        return {"message": "Images uploaded successfully",
+                "image_urls": image_urls}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

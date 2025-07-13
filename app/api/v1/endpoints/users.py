@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get("/profile", response_model=UserResponse)
-async def get_user_profile(current_user = Depends(get_current_user)):
+async def get_user_profile(current_user=Depends(get_current_user)):
     """Get user profile"""
     return UserResponse(
         id=current_user.id,
@@ -27,13 +27,13 @@ async def get_user_profile(current_user = Depends(get_current_user)):
 @router.put("/profile", response_model=UserResponse)
 async def update_user_profile(
     user_data: UserUpdate,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Update user profile"""
     updated_user = await user_service.update_user(current_user.id, user_data)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     return UserResponse(
         id=updated_user.id,
         username=updated_user.username,
@@ -50,18 +50,19 @@ async def update_user_profile(
 @router.post("/upload-avatar")
 async def upload_avatar(
     file: UploadFile = File(...),
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """Upload user avatar"""
     try:
         # Upload image
         image_url = await image_upload_service.upload_image(file, "avatars")
-        
+
         # Update user profile with new image
         user_update = UserUpdate(profile_image=image_url)
         await user_service.update_user(current_user.id, user_update)
-        
-        return {"message": "Avatar uploaded successfully", "image_url": image_url}
+
+        return {"message": "Avatar uploaded successfully",
+                "image_url": image_url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -72,7 +73,7 @@ async def get_user_by_id(user_id: str):
     user = await user_service.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     return UserResponse(
         id=user.id,
         username=user.username,

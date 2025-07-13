@@ -1,4 +1,4 @@
-## File: app/main.py
+# File: app/main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -37,7 +37,10 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
-app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
+app.include_router(
+    products.router,
+    prefix="/api/v1/products",
+    tags=["Products"])
 app.include_router(orders.router, prefix="/api/v1/orders", tags=["Orders"])
 
 

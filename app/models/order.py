@@ -35,12 +35,12 @@ class Order(BaseModel):
     seller_notes: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     # Populated fields
     product_info: Optional[dict] = None
     buyer_info: Optional[dict] = None
     seller_info: Optional[dict] = None
-    
+
     class Config:
         populate_by_name = True
         json_encoders = {ObjectId: str}
@@ -58,9 +58,8 @@ class OrderResponse(Order):
     buyer_info: Optional[dict] = None
     seller_info: Optional[dict] = None
 
-## File: app/schemas/user.py
-from typing import Optional
-from pydantic import BaseModel, Field
+
+# File: app/schemas/user.py
 
 
 class UserCreate(BaseModel):

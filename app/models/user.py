@@ -17,7 +17,7 @@ class User(BaseModel):
     is_verified: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     class Config:
         populate_by_name = True
         json_encoders = {ObjectId: str}
@@ -35,6 +35,6 @@ class UserPublic(BaseModel):
     full_name: Optional[str] = None
     profile_image: Optional[str] = None
     created_at: datetime
-    
+
     class Config:
         populate_by_name = True

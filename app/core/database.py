@@ -9,7 +9,7 @@ async def init_db():
     global client, database
     client = AsyncIOMotorClient(settings.MONGODB_URL)
     database = client[settings.DATABASE_NAME]
-    
+
     # Create indexes
     await create_indexes()
 
@@ -29,13 +29,13 @@ async def create_indexes():
     # User indexes
     await database.users.create_index("email", unique=True)
     await database.users.create_index("username", unique=True)
-    
+
     # Product indexes
     await database.products.create_index("seller_id")
     await database.products.create_index("category")
     await database.products.create_index("created_at")
     await database.products.create_index([("title", "text"), ("description", "text")])
-    
+
     # Order indexes
     await database.orders.create_index("buyer_id")
     await database.orders.create_index("seller_id")

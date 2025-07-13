@@ -14,14 +14,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     """Get current authenticated user"""
     payload = verify_token(token)
     email = payload.get("sub")
-    
+
     if email is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     user = await user_service.get_user_by_email(email)
     if user is None:
         raise HTTPException(
@@ -29,7 +29,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     return user
 
 
@@ -63,17 +63,18 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    access_token_expires = timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    
+
     return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_info(current_user = Depends(get_current_user)):
+async def get_current_user_info(current_user=Depends(get_current_user)):
     """Get current user information"""
     return UserResponse(
         id=current_user.id,

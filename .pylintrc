@@ -1,0 +1,23 @@
+[MASTER]
+ignore=venv,migrations
+jobs=1
+load-plugins=pylint.extensions.docparams
+
+[MESSAGES CONTROL]
+disable=
+    C0114,  ; missing-module-docstring
+    C0115,  ; missing-class-docstring
+    C0116,  ; missing-function-docstring
+    R0903,  ; too-few-public-methods
+    R0801,  ; duplicate-code
+    W0611,  ; unused-import
+    W0613,  ; unused-argument
+    W0707,  ; raise-missing-from
+
+[FORMAT]
+max-line-length=100
+indent-string='    '
+
+[IMPORTS]
+known_third_party=fastapi,pydantic,bson,cloudinary,boto3,motor
+known_first_party=app
